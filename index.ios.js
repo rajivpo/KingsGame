@@ -22,7 +22,8 @@
    Image,
    SvgUri,
    Alert,
-   Dimensions
+   Dimensions,
+   BackgroundImage
  } from 'react-native';
  import SocketIOClient from 'socket.io-client';
  var socket =  SocketIOClient('https://sleepy-wave-31904.herokuapp.com/', {jsonp: false});
@@ -213,7 +214,9 @@ var Main = React.createClass({
   render() {
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     return (
-      <View style={styles.container}>
+      <Image source={{uri:'https://images-na.ssl-images-amazon.com/images/I/51bSNGS8ENL.png'}} style={{height:100, width: 370, flex: 1,
+      alignItems: 'center',
+      opacity: 0.8}}>
       <Modal
         animationType={"slide"}
         transparent={false}
@@ -267,10 +270,8 @@ var Main = React.createClass({
       <TouchableOpacity onPress={this.setModalVisible} style={[styles.button, styles.buttonBlue]}>
       <Text style={styles.buttonLabel}>Tap to Create Game</Text>
       </TouchableOpacity>
-
       </View>
-      </View>
-
+      </Image>
     );
   }
 })
@@ -281,7 +282,7 @@ var Main = React.createClass({
      return{
        id: '',
        cards: _.shuffle(Deck),
-       currentrule: 'No kings cup rule yet ;)'
+       currentRule: 'No kings cup rule yet ;)'
      }
    },
    componentDidMount(){
@@ -342,6 +343,7 @@ var Main = React.createClass({
      .then((response) => response.json())
      .then((responseJson) => {
        if(responseJson.success){
+         console.log("hey u r here")
          socket.emit("update", self.state.id) //undefined
        } else{
          console.log('ERROR BOI', responseJson.err)
@@ -361,28 +363,27 @@ var Main = React.createClass({
     {setRule ? <View style={styles.container}>
         <View style={{flex: 1}}></View>
         <View style={{flex: 0.5, flexDirection: 'row'}}>
-          <View style= {{flex: .5, marginLeft: 10}}><Text>Cards Remaining: {this.state.cards.length}</Text></View>
-          <View style= {{flex: .5, alignItems: 'flex-end', marginRight: 20}}><TouchableOpacity><Text>Reset</Text></TouchableOpacity></View>
+          <View style= {{flex: .5, marginLeft: 10, marginTop: -20}}><Text>Cards Remaining: {this.state.cards.length}</Text></View>
         </View>
-        <View style ={{flex: 0.75}}><Text>Instructions: {this.state.cards[0].rule}</Text></View>
+        <View style ={{flex: 0.75, marginTop: -30}}><Text>Instructions: {this.state.cards[0].rule}</Text></View>
         <TouchableOpacity style ={{flex: 5}} onLongPress={ this.longpress.bind(null, self)} delayLongPress={500}>
-          <View style ={{flex: 1}}>
+          <View style ={{flex: 1, marginTop: -30}}>
             <Image
               style={{height: 400, width: 275}}
               source={poop}
             />
           </View>
         </TouchableOpacity>
-        <View style={{flex: 0.2}}><Text>Rule: {this.state.currentrule}</Text></View>
+        <View style={{flex: 0.2, marginTop: -100, marginLeft: -80}}><Text>Rule: {this.state.currentRule}</Text></View>
         <View style={{flex: 0.8}}>
-          <View style={{flex: 0.5}}>
+          <View style={{flex: 0.5, marginLeft: -40}}>
           <TextInput
             placeholder="type a rule"
-            style={{height: 40, textAlign: 'center', width: 200}}
-            onChangeText={(text) => this.setState({currentrule: text})}
+            style={{height: 40, textAlign: 'center', width: 200, marginLeft: -60}}
+            onChangeText={(text) => self.setState({currentRule: text})}
           />
-          <TouchableOpacity onPress={this.longpress.bind(null, self)}>
-            <Text style={{height: 40, width: 200}}>Submit Rule</Text>
+          <TouchableOpacity onPress={this.longpress.bind(null, self)} style={[styles.buttonRed]} >
+            <Text style={{height: 20, width: 100 }}>Submit Rule</Text>
           </TouchableOpacity>
           </View>
         </View>
@@ -390,10 +391,9 @@ var Main = React.createClass({
         <View style={{flex: 0.75}}></View>
         <View style={{flex: 0.5, flexDirection: 'row'}}>
           <View style= {{flex: .5, marginLeft: 10}}><Text>Cards Remaining: {this.state.cards.length}</Text></View>
-          <View style= {{flex: .5, alignItems: 'flex-end', marginRight: 20}}><TouchableOpacity><Text>Reset</Text></TouchableOpacity></View>
         </View>
-        <View style ={{flex: 0.75}}><Text>Instructions: {this.state.cards[0].rule}</Text></View>
-        <TouchableOpacity style ={{flex: 5}} onLongPress={ this.longpress.bind(null, self)} delayLongPress={500}>
+        <View style ={{flex: 0.8}}><Text>Instructions: {this.state.cards[0].rule}</Text></View>
+        <TouchableOpacity style ={{flex: 5}} onLongPress={ this.longpress.bind(null, self)} delayLongPress={750}>
           <View style ={{flex: 1}}>
             <Image
               style={{height: 400, width: 275}}
@@ -401,7 +401,7 @@ var Main = React.createClass({
             />
           </View>
         </TouchableOpacity>
-        <View style={{flex: 1}}><Text>Rule: {this.state.currentrule}</Text></View>
+        <View style={{flex: 1}}><Text>Rule: {this.state.currentRule}</Text></View>
       </View>
     }
     </View>
@@ -453,27 +453,36 @@ var Main = React.createClass({
     fontSize: 28,
     textAlign: 'center',
     margin: 15,
+    color: 'white',
+    backgroundColor: 'red',
+    opacity: 0.8
   },
   textMedium: {
     fontSize: 18,
     textAlign: 'center',
     margin: 5,
+    backgroundColor: 'white'
   },
   textSmall: {
-    fontSize: 12,
+    fontSize: 15,
     textAlign: 'center',
     margin: 5,
+    marginTop: 80,
+    opacity: 0.8
   },
   buttoninput: {
     alignSelf: 'stretch',
-    paddingTop: 10,
-    paddingBottom: 10,
-    marginTop: 10,
-    marginLeft: 5,
-    marginRight: 5,
-    borderRadius: 0,
-    paddingLeft: 10,
-    paddingRight: 10
+    marginTop: -10,
+    color: 'black'
+  },
+  buttoninputs: {
+    alignSelf: 'stretch',
+    paddingTop: 3,
+    paddingBottom: 3,
+    marginTop: 3,
+    height: 2,
+    margin: 3,
+    textAlign: 'center'
   }
 });
 AppRegistry.registerComponent('cups', () => cups);
